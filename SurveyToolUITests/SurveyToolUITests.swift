@@ -8,36 +8,79 @@
 import XCTest
 
 final class SurveyToolUITests: XCTestCase {
+    private var app: XCUIApplication!
 
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+        app = XCUIApplication()
+        app.launchArguments.append("--reset-database")
+        app.launch()
     }
-
+    
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        app.terminate()
     }
 
-    @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
-        let app = XCUIApplication()
+    func testAddSurveyAndPersist() throws {
+        // Given
+        let addButton = app.buttons["Add New Survey"]
+
+        // When
+        addButton.tap()
+
+        let surveyTextField = app.textFields["Enter your survey question"]
+        XCTAssertTrue(surveyTextField.waitForExistence(timeout: 2), "Survey text field should appear")
+        surveyTextField.tap()
+        surveyTextField.typeText("Persistence Test Survey")
+
+        app.buttons["Save Survey"].tap()
+
+        // Then
+        let surveyCell = app.staticTexts["Persistence Test Survey"]
+        XCTAssertTrue(surveyCell.waitForExistence(timeout: 2), "Newly added survey should appear in the list")
+
+        // Close and Relaunch App
+        app.terminate()
+        app.launchArguments.removeAll()
         app.launch()
 
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        // Verify Persistence
+        XCTAssertTrue(surveyCell.waitForExistence(timeout: 2), "Survey should persist after app relaunch")
+    }
+    
+    func testAddResponseAndPersist() throws {
+        // Given
+        addTestSurvey(named: "Response Persistence Test")
+        let surveyCell = app.staticTexts["Response Persistence Test"]
+        surveyCell.tap()
+
+        // When
+        let yesButton = app.buttons["Yes"]
+        yesButton.tap()
+
+        // Verify Response is Saved
+        let yesPercentage = app.staticTexts["Yes: 1 (100.0%) | No: 0 (0.0%)"]
+        XCTAssertTrue(yesPercentage.waitForExistence(timeout: 2), "Yes response should be recorded")
+
+        // Close and Relaunch App
+        app.terminate()
+        app.launchArguments.removeAll()
+        app.launch()
+
+        // Verify Persistence
+        let yesPercentageAfterRelaunch = app.staticTexts["Yes: 1 (100.0%) | No: 0 (0.0%)"]
+        XCTAssertTrue(yesPercentageAfterRelaunch.waitForExistence(timeout: 2), "Response should persist after app relaunch")
     }
 
-    @MainActor
-    func testLaunchPerformance() throws {
-        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
-            // This measures how long it takes to launch your application.
-            measure(metrics: [XCTApplicationLaunchMetric()]) {
-                XCUIApplication().launch()
-            }
-        }
+    private func addTestSurvey(named name: String) {
+        let addButton = app.buttons["Add New Survey"]
+        addButton.tap()
+
+        let surveyTextField = app.textFields["Enter your survey question"]
+        XCTAssertTrue(surveyTextField.waitForExistence(timeout: 2), "Survey text field should appear")
+        surveyTextField.tap()
+        surveyTextField.typeText(name)
+
+        app.buttons["Save Survey"].tap()
     }
 }
