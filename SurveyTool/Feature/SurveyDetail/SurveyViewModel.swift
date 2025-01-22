@@ -30,6 +30,12 @@ class SurveyViewModel: ObservableObject {
         let newSurvey = Survey(question: question)
         surveys.append(newSurvey)
         modelContext.insert(newSurvey)
+        
+        do {
+            try modelContext.save()
+        } catch {
+            print("Error saving new survey: \(error)")
+        }
     }
     
     func deleteSurvey(
@@ -40,6 +46,12 @@ class SurveyViewModel: ObservableObject {
             let survey = surveys[index]
             surveys.remove(at: index)
             modelContext.delete(survey)
+        }
+        
+        do {
+            try modelContext.save()
+        } catch {
+            print("Error saving after deleting survey: \(error)")
         }
     }
     
@@ -52,6 +64,12 @@ class SurveyViewModel: ObservableObject {
             let newResponse = SurveyResponse(answer: answer)
             surveys[index].responses.append(newResponse)
             modelContext.insert(newResponse)
+            
+            do {
+                try modelContext.save()
+            } catch {
+                print("Error saving response: \(error)")
+            }
         }
     }
     

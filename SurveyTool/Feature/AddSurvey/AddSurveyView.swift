@@ -8,6 +8,12 @@
 import SwiftUI
 
 struct AddSurveyView: View {
+    enum FocusField: Hashable {
+      case field
+    }
+
+    @FocusState private var focusedField: FocusField?
+    
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) private var modelContext
     @State private var question: String = ""
@@ -17,6 +23,7 @@ struct AddSurveyView: View {
         NavigationView {
             VStack {
                 TextField("Enter your survey question", text: $question)
+                    .focused($focusedField, equals: .field)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
 
@@ -30,7 +37,7 @@ struct AddSurveyView: View {
                     Text("Save Survey")
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(Color.blue)
+                        .background(question.isEmpty ? Color.gray : Color.blue)
                         .foregroundColor(.white)
                         .cornerRadius(8)
                         .padding(.horizontal)
@@ -39,5 +46,8 @@ struct AddSurveyView: View {
             }
             .navigationTitle("New Survey")
         }
+        .onAppear {
+            self.focusedField = .field
+        }        
     }
 }

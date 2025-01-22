@@ -12,7 +12,7 @@ struct SurveyDetailView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) private var modelContext
     @ObservedObject var viewModel: SurveyViewModel
-
+    
     var body: some View {
         VStack {
             Text(survey.question)

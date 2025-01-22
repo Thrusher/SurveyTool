@@ -14,8 +14,10 @@ struct SurveyToolApp: App {
 
     init() {
         do {
-            container = try ModelContainer(for: Survey.self,
-                                           SurveyResponse.self)
+            container = try ModelContainer(
+                for: Survey.self, SurveyResponse.self,
+                configurations: ModelConfiguration("SurveyData")
+            )
         } catch {
             fatalError("Failed to configure SwiftData container: \(error)")
         }
