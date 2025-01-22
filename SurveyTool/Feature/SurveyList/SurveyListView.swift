@@ -11,18 +11,16 @@ struct SurveyListView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel = SurveyViewModel()
     @State private var showingAddSurvey = false
-
+    @State private var selectedSurvey: Survey?
+    
     var body: some View {
         NavigationView {
             VStack {
                 List {
                     ForEach(viewModel.surveys) { survey in
-                        NavigationLink(
-                            destination: SurveyDetailView(
-                                survey: survey,
-                                viewModel: viewModel
-                            )
-                        ) {
+                        Button(action: {
+                            selectedSurvey = survey
+                        }) {
                             VStack(alignment: .leading) {
                                 Text(survey.question)
                                     .font(.headline)
@@ -37,7 +35,7 @@ struct SurveyListView: View {
                     }
                 }
                 .listStyle(InsetGroupedListStyle())
-
+                
                 Button(action: { showingAddSurvey.toggle() }) {
                     Text("Add New Survey")
                         .padding()
@@ -51,6 +49,11 @@ struct SurveyListView: View {
             .navigationTitle("Surveys")
             .sheet(isPresented: $showingAddSurvey) {
                 AddSurveyView(viewModel: viewModel)
+            }
+            .sheet(item: $selectedSurvey) { survey in
+                SurveyDetailView(survey: survey, viewModel: viewModel)
+                    .presentationDetents([.medium, .fraction(0.5)])
+                    .presentationDragIndicator(.visible)
             }
             .onAppear {
                 viewModel.loadSurveys(using: modelContext)
