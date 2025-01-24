@@ -8,7 +8,7 @@
 import SwiftData
 import SwiftUI
 
-class SurveyViewModel: ObservableObject {
+class SurveyListViewModel: ObservableObject {
     @Published var surveys: [Survey] = []
     
     func loadSurveys(

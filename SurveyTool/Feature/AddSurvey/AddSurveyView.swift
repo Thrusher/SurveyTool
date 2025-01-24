@@ -15,10 +15,14 @@ struct AddSurveyView: View {
     @FocusState private var focusedField: FocusField?
     
     @Environment(\.dismiss) var dismiss
-    @Environment(\.modelContext) private var modelContext
     @State private var question: String = ""
-    @ObservedObject var viewModel: SurveyViewModel
+    
+    let questionHandler: (String) -> Void
 
+    init(questionHandler: @escaping (String) -> Void) {
+        self.questionHandler = questionHandler
+    }
+    
     var body: some View {
         NavigationView {
             VStack {
@@ -29,8 +33,7 @@ struct AddSurveyView: View {
 
                 Button(action: {
                     if !question.isEmpty {
-                        viewModel.addSurvey(question: question,
-                                            using: modelContext)
+                        questionHandler(question)
                         dismiss()
                     }
                 }) {
@@ -48,6 +51,6 @@ struct AddSurveyView: View {
         }
         .onAppear {
             self.focusedField = .field
-        }        
+        }
     }
 }

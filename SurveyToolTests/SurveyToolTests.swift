@@ -16,7 +16,7 @@ struct SurveyToolTests {
         let modelContainer = try! ModelContainer(for: Survey.self,
                                                  SurveyResponse.self)
         let modelContext = modelContainer.mainContext
-        let viewModel = SurveyViewModel()
+        let viewModel = SurveyListViewModel()
         
         // When
         viewModel.addSurvey(question: "Test Survey", using: modelContext)
@@ -33,7 +33,7 @@ struct SurveyToolTests {
         let modelContainer = try! ModelContainer(for: Survey.self,
                                                  SurveyResponse.self)
         let modelContext = modelContainer.mainContext
-        let viewModel = SurveyViewModel()
+        let viewModel = SurveyListViewModel()
         viewModel.addSurvey(question: "Survey for Response",
                             using: modelContext)
         let survey = viewModel.surveys.first!
@@ -53,7 +53,7 @@ struct SurveyToolTests {
         let modelContainer = try! ModelContainer(for: Survey.self,
                                                  SurveyResponse.self)
         let modelContext = modelContainer.mainContext
-        let viewModel = SurveyViewModel()
+        let viewModel = SurveyListViewModel()
         viewModel.addSurvey(question: "Survey to Delete", using: modelContext)
         
         // When
@@ -68,7 +68,7 @@ struct SurveyToolTests {
         let modelContainer = try! ModelContainer(for: Survey.self,
                                                  SurveyResponse.self)
         let modelContext = modelContainer.mainContext
-        let viewModel = SurveyViewModel()
+        let viewModel = SurveyListViewModel()
         viewModel.addSurvey(question: "Survey with Results",
                             using: modelContext)
         let survey = viewModel.surveys.first!
